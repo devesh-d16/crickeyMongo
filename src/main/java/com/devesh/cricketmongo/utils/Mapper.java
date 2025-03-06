@@ -32,13 +32,22 @@ public class Mapper {
     }
 
     public MatchResponseDTO getMatchResponse(Match match) {
+
         MatchResponseDTO dto = new MatchResponseDTO();
-//        dto.setTitle(match.getTeam1Id().getTeam().getTeamName() + " v/s " + match.getTeam2().getTeam().getTeamName());
+
+        TeamStats teamStats1 = teamStatService.findByTeamStatId(match.getTeam1Id());
+        Team team1 = teamService.getTeamById(teamStats1.getTeamId());
+
+        TeamStats teamStats2 = teamStatService.findByTeamStatId(match.getTeam2Id());
+        Team team2 = teamService.getTeamById(teamStats2.getTeamId());
+
+        dto.setTitle(team1.getTeamName() + " v/s " + team2.getTeamName());
         dto.setVenue(match.getVenue());
         dto.setOvers(match.getOvers());
         dto.setResult(match.getWinningCondition());
         dto.setTeam1(convertToTeamDTO(match.getTeam1Id()));
         dto.setTeam2(convertToTeamDTO(match.getTeam2Id()));
+
         return dto;
     }
 
@@ -46,7 +55,7 @@ public class Mapper {
         if (teamId == null) return null;// Avoid NullPointerException
         TeamStats team = teamStatsRepository.findById(teamId).orElseThrow(RuntimeException::new);
         TeamResponseDTO dto = new TeamResponseDTO();
-        dto.setTeamName(teamService.getTeamById(team.getTeamId()).getName());
+        dto.setTeamName(teamService.getTeamById(team.getTeamId()).getTeamName());
         dto.setRuns(team.getRuns());
         dto.setWickets(team.getWickets());
         dto.setOvers(team.getOvers());
@@ -58,8 +67,8 @@ public class Mapper {
         Team batting = teamService.getTeamById(teamStatService.findByTeamStatId(innings.getBattingTeamId()).getTeamId());
         Team bowling = teamService.getTeamById(teamStatService.findByTeamStatId(innings.getBowlingTeamId()).getTeamId());
 
-        inningsDTO.setBattingTeam(batting.getName());
-        inningsDTO.setBowlingTeam(bowling.getName());
+        inningsDTO.setBattingTeam(batting.getTeamName());
+        inningsDTO.setBowlingTeam(bowling.getTeamName());
         inningsDTO.setRuns(innings.getRuns());
         inningsDTO.setWickets(innings.getWickets());
         inningsDTO.setOvers(innings.getOvers());
@@ -87,9 +96,9 @@ public class Mapper {
 
         for(PlayerStats bowler : bowlers){
             Player player = playerService.getPlayerById(bowler.getPlayerId());
-            if(player.getRole()== PlayerRole.BOWLER) {
+            if(player.getPlayerRole()== PlayerRole.BOWLER) {
                 BowlingStatsDTO bowlingStatsDTO = new BowlingStatsDTO();
-                bowlingStatsDTO.setName(player.getName());
+                bowlingStatsDTO.setName(player.getPlayerName());
                 bowlingStatsDTO.setOversBowled((bowler.getBallsBowled())/6);
                 bowlingStatsDTO.setRunsConceded(bowler.getRunsConceded());
                 bowlingStatsDTO.setWicketsTaken(bowler.getWicketsTaken());
@@ -109,7 +118,7 @@ public class Mapper {
         for(PlayerStats batter : players){
             Player player = playerService.getPlayerById(batter.getPlayerId());
             BattingStatsDTO battingStatsDTO = new BattingStatsDTO();
-            battingStatsDTO.setName(player.getName());
+            battingStatsDTO.setName(player.getPlayerName());
             battingStatsDTO.setRunsScored(batter.getRunsScored());
             battingStatsDTO.setBallsFaced(batter.getBallsFaced());
             bat.add(battingStatsDTO);

@@ -14,13 +14,13 @@ import org.springframework.data.mongodb.core.mapping.Field;
 public class Ball {
 
     @Id
-    private String id;
+    private String ballId;
 
     private int ballNo;
     private int runs;
 
-    @Field("isWicket")
-    private boolean isWicket;
+    @Field("wicket")
+    private boolean wicket;
 
     @Field("over_id")
     private String overId;

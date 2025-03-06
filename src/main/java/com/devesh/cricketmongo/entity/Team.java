@@ -16,8 +16,8 @@ import java.util.List;
 public class Team {
 
     @Id
-    private Long id;
+    private Long teamId;
 
     @Field("name")
-    private String name;
+    private String teamName;
 }

@@ -10,7 +10,7 @@ import java.util.List;
 public interface OverRepository extends MongoRepository<Over, Long> {
     List<Over> findAllByInningId(String inningId);
 
-    void deleteById(String id);
+    void deleteByOverId(String overId);
 
-    Over getOverById(String id);
+    Over findByOverId(String overId);
 }

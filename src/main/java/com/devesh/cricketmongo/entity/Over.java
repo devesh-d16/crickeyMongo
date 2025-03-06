@@ -16,7 +16,7 @@ import java.util.List;
 public class Over {
 
     @Id
-    private String id;
+    private String overId;
 
     @Field("over_no")
     private int overNo;

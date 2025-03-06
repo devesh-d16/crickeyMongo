@@ -27,7 +27,7 @@ public class ResultService {
             Team winner = teamService.getTeamById(winnerTeam.getTeamId());
             result.setWinner(winnerTeam);
             result.setWinningMargin(runs);
-            result.setWinningCondition(winner.getName() + " won the game by " + runs + " runs.");
+            result.setWinningCondition(winner.getTeamName() + " won the game by " + runs + " runs.");
         }
         else if(runsScoredByTeam1 < runsScoredByTeam2){
             int wicketsMargin = 10 - secondInnings.getWickets();
@@ -35,7 +35,7 @@ public class ResultService {
             Team winner = teamService.getTeamById(winnerTeam.getTeamId());
             result.setWinner(winnerTeam);
             result.setWinningMargin(wicketsMargin);
-            result.setWinningCondition(winner.getName()+ " won the game by " + wicketsMargin + " wickets.");
+            result.setWinningCondition(winner.getTeamName()+ " won the game by " + wicketsMargin + " wickets.");
         }
         else{
             result.setWinner(null);

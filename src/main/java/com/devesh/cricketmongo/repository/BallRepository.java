@@ -8,13 +8,14 @@ import java.util.List;
 
 @Repository
 public interface BallRepository extends MongoRepository<Ball, Long> {
+    
     void deleteAllByOverId(String overId);
 
     List<Ball> findAllByOverId(String overId);
 
     void deleteByOverId(String overId);
 
-    Ball getBallById(String id);
+    Ball findByBallId(String ballId);
 
-    void deleteById(String id);
+    void deleteByBallId(String ballId);
 }

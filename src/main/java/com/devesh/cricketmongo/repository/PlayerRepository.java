@@ -11,19 +11,13 @@ import java.util.Optional;
 @Repository
 public interface PlayerRepository extends MongoRepository<Player, String> {
 
-    boolean existsByName(String name);
+    boolean existsByPlayerName(String playerName);
 
-    Optional<Player> findByName(String name);
+    Optional<Player> findByPlayerName(String playerName);
 
-    List<Player> findAllByRole(PlayerRole role);
+    List<Player> findAllByPlayerRole(PlayerRole playerRole);
 
-    boolean existsPlayerByName(String name);
+    Optional<Player> findByPlayerId(Long playerId);
 
-    Player getPlayerByName(String name);
-
-    Optional<Player> getPlayerById(Long playerId);
-
-    List<Player> getAllByRole(PlayerRole role);
-
-    void deleteById(Long id);
+    void deleteByPlayerId(Long playerId);
 }

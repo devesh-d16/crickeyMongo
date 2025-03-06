@@ -9,11 +9,11 @@ import java.util.List;
 @Repository
 public interface InningRepository extends MongoRepository<Inning, Long> {
 
-    Inning getInningById(String id);
+    Inning findByInningId(String inningId);
 
     List<Inning> findAllByMatchId(Long matchId);
 
-    void deleteByMatchId(Long matchId);
+    void deleteInningByMatchId(Long matchId);
 
-    void deleteById(String id);
+    void deleteByInningId(String inningId);
 }

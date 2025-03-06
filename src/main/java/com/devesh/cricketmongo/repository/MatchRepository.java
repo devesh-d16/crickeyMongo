@@ -15,16 +15,15 @@ public interface MatchRepository extends MongoRepository<Match, String> {
 
     List<Match> findByTeam1IdOrTeam2Id(String team1Id, String team2Id);
 
-    Match findByIdAndTeam1IdOrTeam2Id(String matchId, String team1Id, String team2Id);
+    Match findByMatchIdAndTeam1IdAndTeam2Id(Long matchId, String team1Id, String team2Id);
 
-   Optional<Match> findMatchById(Long id);
+    Optional<Match> findByMatchId(Long matchId);
 
+    List<Match> findMatchByWinnerId(String winnerId);
 
-    List<Match> getMatchByWinnerId(String winnerId);
+    List<Match> findMatchByVenue(String venue);
 
-    List<Match> getMatchByVenue(String venue);
+    List<Match> findMatchByMatchStatus(MatchStatus matchStatus);
 
-    List<Match> getMatchByMatchStatus(MatchStatus matchStatus);
-
-    void deleteById(Long id);
+    void deleteMatchByMatchId(Long matchId);
 }

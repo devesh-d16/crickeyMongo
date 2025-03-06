@@ -44,11 +44,11 @@ public class MatchDAO {
     }
 
     public Match getMatchById(Long matchId) {
-       return matchRepository.findMatchById((matchId)).orElseThrow(() -> new ResourceNotFoundException("Match with id " + matchId + " not found"));
+       return matchRepository.findByMatchId(matchId).orElseThrow(() -> new ResourceNotFoundException("Match with id " + matchId + " not found"));
     }
 
-    public Team getWinnerByMatchId(Long id){
-        Match match = matchRepository.findMatchById(id).orElseThrow(() -> new ResourceNotFoundException("Match with id " + id + " not found"));
+    public Team getWinnerByMatchId(Long matchId){
+        Match match = matchRepository.findByMatchId(matchId).orElseThrow(() -> new ResourceNotFoundException("Match with id " + matchId + " not found"));
         TeamStats winner = teamStatService.findByTeamStatId(match.getWinnerId());
         Team winnerTeam = teamService.getTeamById(winner.getTeamId());
         if(match.getWinnerId() == null){
@@ -62,13 +62,13 @@ public class MatchDAO {
         if(team == null) {
             return Collections.emptyList();
         }
-        return matchRepository.getMatchByWinnerId(teamId);
+        return matchRepository.findMatchByWinnerId(teamId);
     }
 
     public List<Match> getMatchesByMatchStatus(String matchStatus) {
         try {
             MatchStatus status = MatchStatus.valueOf(matchStatus.toUpperCase());
-            return matchRepository.getMatchByMatchStatus(status);
+            return matchRepository.findMatchByMatchStatus(status);
         } catch (GameRuleException e) {
             throw new GameRuleException("Match status " + matchStatus + " not supported");
         }
@@ -88,41 +88,41 @@ public class MatchDAO {
         Team team1 = teamService.getTeamByName(team1Name);
         Team team2 = teamService.getTeamByName(team2Name);
 
-        return getAllMatches().stream().filter(match -> (teamStatService.findByTeamStatId(match.getTeam1Id()).getTeamId().equals(team1.getId()) && teamStatService.findByTeamStatId(match.getTeam2Id()).getTeamId().equals(team2.getId())) ||
-                (teamStatService.findByTeamStatId(match.getTeam1Id()).getTeamId().equals(team2.getId()) && teamStatService.findByTeamStatId(match.getTeam2Id()).getTeamId().equals(team1.getId()))).collect(Collectors.toList());
+        return getAllMatches().stream().filter(match -> (teamStatService.findByTeamStatId(match.getTeam1Id()).getTeamId().equals(team1.getTeamId()) && teamStatService.findByTeamStatId(match.getTeam2Id()).getTeamId().equals(team2.getTeamId())) ||
+                (teamStatService.findByTeamStatId(match.getTeam1Id()).getTeamId().equals(team2.getTeamId()) && teamStatService.findByTeamStatId(match.getTeam2Id()).getTeamId().equals(team1.getTeamId()))).collect(Collectors.toList());
     }
 
     public List<Match> getMatchByTeamName(String name) {
         Team team = teamService.getTeamByName(name);
         return getAllMatches().stream()
-                .filter(match -> teamStatService.findByTeamStatId(match.getTeam1Id()).getTeamId().equals(team.getId()) || teamStatService.findByTeamStatId(match.getTeam2Id()).getTeamId().equals(team.getId()))
+                .filter(match -> teamStatService.findByTeamStatId(match.getTeam1Id()).getTeamId().equals(team.getTeamId()) || teamStatService.findByTeamStatId(match.getTeam2Id()).getTeamId().equals(team.getTeamId()))
                 .collect(Collectors.toList());
     }
 //
     @Transactional
-    public String deleteMatchById(Long id) {
-        Match match = getMatchById(id);
+    public String deleteMatchById(Long matchId) {
+        Match match = getMatchById(matchId);
         if(match == null){
-            return "No match with match id " + id + " found";
+            return "No match with match matchId " + matchId + " found";
         }
         try{
             List<String> innings = match.getInningIds();
             inningService.deleteAllInningsById(innings);
-            TeamStats team1 = teamStatsRepository.getTeamStatsById(match.getTeam1Id());
+            TeamStats team1 = teamStatsRepository.findTeamStatsByTeamStatsId(match.getTeam1Id());
             List<PlayerStats> players1 = team1.getPlayerIds().stream().map(
                     playerId -> playerStatsRepository.findById(playerId).orElseThrow(() -> new RuntimeException())
             ).collect(Collectors.toList());
             teamStatsRepository.delete(team1);
             playerStatsRepository.deleteAll(players1);
 
-            TeamStats team2 = teamStatsRepository.getTeamStatsById(match.getTeam2Id());
+            TeamStats team2 = teamStatsRepository.findTeamStatsByTeamStatsId(match.getTeam2Id());
             List<PlayerStats> players2 = team2.getPlayerIds().stream().map(
                     playerId -> playerStatsRepository.findById(playerId).orElseThrow(() -> new RuntimeException())
             ).collect(Collectors.toList());
             teamStatsRepository.delete(team2);
             playerStatsRepository.deleteAll(players2);
 
-            matchRepository.deleteById(id);
+            matchRepository.deleteMatchByMatchId(matchId);
             return "Match deleted successfully";
         }
         catch (Exception e){
@@ -139,11 +139,11 @@ public class MatchDAO {
 //    }
 //
     public List<Match> getMatchesByVenue(String venue) {
-        return matchRepository.getMatchByVenue(venue);
+        return matchRepository.findMatchByVenue(venue);
     }
 
     public List<Match> getMatchByWinnerTeamName(String name) {
         Team team = teamService.getTeamByName(name);
-        return getAllMatches().stream().filter(match -> teamStatService.findByTeamStatId(match.getWinnerId()).getTeamId().equals(team.getId())).collect(Collectors.toList());
+        return getAllMatches().stream().filter(match -> teamStatService.findByTeamStatId(match.getWinnerId()).getTeamId().equals(team.getTeamId())).collect(Collectors.toList());
     }
 }

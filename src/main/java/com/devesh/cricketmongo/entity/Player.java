@@ -15,12 +15,12 @@ import org.springframework.data.mongodb.core.mapping.Field;
 public class Player {
 
     @Id
-    private Long id;
+    private Long playerId;
 
     @Field("name")
-    private String name;
+    private String playerName;
 
     @Field("role")
-    private PlayerRole role;
+    private PlayerRole playerRole;
 
 }

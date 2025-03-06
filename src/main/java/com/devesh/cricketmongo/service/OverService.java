@@ -37,14 +37,14 @@ public class OverService {
         }
 
         gameRulesService.swapStrikers(strikePair);
-        over.setBallIds(balls.stream().map(Ball::getId).collect(Collectors.toList()));
+        over.setBallIds(balls.stream().map(Ball::getBallId).collect(Collectors.toList()));
     }
 
     private Ball createBall(Over over, int ballNumber, PlayerStats bowler) {
         Ball ball = new Ball();
-        ball.setOverId(over.getId());
+        ball.setOverId(over.getOverId());
         ball.setBallNo(ballNumber);
-        ball.setBowlerId(bowler.getId());
+        ball.setBowlerId(bowler.getPlayerStatsId());
         return ball;
     }
 
@@ -59,10 +59,10 @@ public class OverService {
 
     public void deleteAllOversById(List<String> overIds) {
         for(String overId : overIds){
-            Over over = overRepository.getOverById(overId);
+            Over over = overRepository.findByOverId(overId);
             List<String> ballIds = over.getBallIds();
             ballService.deleteAllBallById(ballIds);
-            overRepository.deleteById(overId);
+            overRepository.deleteByOverId(overId);
         }
     }
 }

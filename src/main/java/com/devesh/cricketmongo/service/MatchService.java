@@ -50,10 +50,10 @@ public class MatchService {
         List<String> inningList = new ArrayList<>();
 
         Inning firstInnings = simulateInning(match, team1, team2, -1, overs);  // (targetRuns for first innings = -1)
-        inningList.add(firstInnings.getId());
+        inningList.add(firstInnings.getInningId());
 
         Inning secondInnings = simulateInning(match, team2, team1, firstInnings.getRuns(), overs);
-        inningList.add(secondInnings.getId());
+        inningList.add(secondInnings.getInningId());
 
         teamStatsRepository.saveAll(List.of(team1, team2));
         match.setInningIds(inningList);
@@ -102,19 +102,19 @@ public class MatchService {
 
         TeamStats teamStats = new TeamStats();
 
-        teamStats.setTeamId(team.getId());
+        teamStats.setTeamId(team.getTeamId());
 
         List<String> bowlers = new ArrayList<>();
         List<String> matchPlayers = players.stream()
                 .map(player -> {
                             PlayerStats matchPlayer = new PlayerStats();
-                            matchPlayer.setPlayerId(player.getId());
-                            matchPlayer.setTeamId(teamStats.getId());
+                            matchPlayer.setPlayerId(player.getPlayerId());
+                            matchPlayer.setTeamId(teamStats.getTeamStatsId());
                             playerStatsRepository.save(matchPlayer);
-                            if(player.getRole() == PlayerRole.BOWLER){
-                                bowlers.add(matchPlayer.getId());
+                            if(player.getPlayerRole() == PlayerRole.BOWLER){
+                                bowlers.add(matchPlayer.getPlayerStatsId());
                             }
-                            return matchPlayer.getId();
+                            return matchPlayer.getPlayerStatsId();
                         }
                 ).collect(Collectors.toList());
         teamStats.setPlayerIds(matchPlayers);
@@ -127,16 +127,16 @@ public class MatchService {
 
     public Match createMatch(Long id, TeamStats team1, TeamStats team2, int overs, String venue) {
         Match match = new Match();
-        match.setId(id);
-        match.setTeam1Id(team1.getId());
-        match.setTeam2Id(team2.getId());
+        match.setMatchId(id);
+        match.setTeam1Id(team1.getTeamStatsId());
+        match.setTeam2Id(team2.getTeamStatsId());
         match.setVenue(venue);
         match.setOvers(overs);
         match.setMatchStatus(MatchStatus.UPCOMING);
         match.setUpdatedAt(LocalDateTime.now());
 
-        team1.setMatchId(match.getId());
-        team2.setMatchId(match.getId());
+        team1.setMatchId(match.getMatchId());
+        team2.setMatchId(match.getMatchId());
 
         matchRepository.save(match);
         return match;
@@ -146,9 +146,9 @@ public class MatchService {
     public Inning simulateInning(Match match, TeamStats battingTeam, TeamStats bowlingTeam, int targetRuns, int overs) {
 
         Inning inning = new Inning();
-        inning.setMatchId(match.getId());
-        inning.setBattingTeamId(battingTeam.getId());
-        inning.setBowlingTeamId(bowlingTeam.getId());
+        inning.setMatchId(match.getMatchId());
+        inning.setBattingTeamId(battingTeam.getTeamStatsId());
+        inning.setBowlingTeamId(bowlingTeam.getTeamStatsId());
 
         inningService.startInnings(inning, battingTeam, bowlingTeam, targetRuns, overs);
         battingTeam.setOvers(inning.getOvers());
@@ -162,7 +162,7 @@ public class MatchService {
         match.setMatchStatus(MatchStatus.COMPLETED);
         Result result = resultService.evaluateResult(firstInnings, secondInnings);
         if (result.getWinner() != null) {
-            match.setWinnerId(result.getWinner().getId());
+            match.setWinnerId(result.getWinner().getTeamStatsId());
         }
         match.setWinningCondition(result.getWinningCondition());
     }

@@ -50,7 +50,7 @@ public class InningService {
             bowlerIndex = (bowlerIndex + 1) % playersBowl.size();
         }
 
-        inning.setOverIds(overs.stream().map(Over::getId).collect(Collectors.toList()));
+        inning.setOverIds(overs.stream().map(Over::getOverId).collect(Collectors.toList()));
         inningRepository.save(inning);
     }
 
@@ -61,22 +61,22 @@ public class InningService {
     private Over createOver(Inning inning, int overNumber, PlayerStats bowler) {
         Over over = new Over();
         over.setOverNo(overNumber);
-        over.setInningId(inning.getId());
-        over.setBowlerId(bowler.getId());
+        over.setInningId(inning.getInningId());
+        over.setBowlerId(bowler.getPlayerStatsId());
         return over;
     }
 
     public Inning getInningById(String id){
-        return inningRepository.getInningById(id);
+        return inningRepository.findByInningId(id);
     }
 
 
     public void deleteAllInningsById(List<String> innings) {
         for(String inningId : innings){
-            Inning inning = inningRepository.getInningById(inningId);
+            Inning inning = inningRepository.findByInningId(inningId);
             List<String> overIds = inning.getOverIds();
             overService.deleteAllOversById(overIds);
-            inningRepository.deleteById(inningId);
+            inningRepository.deleteByInningId(inningId);
         }
     }
 }

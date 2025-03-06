@@ -9,9 +9,9 @@ import java.util.Optional;
 
 @Repository
 public interface TeamRepository extends MongoRepository<Team, String> {
-    boolean existsByName(String name);
+    boolean existsByTeamName(String teamName);
 
-    Optional<Team> findByName(String name);
+    Optional<Team> findByTeamName(String teamName);
 
-    Optional<Team> getTeamById(Long id);
+    Optional<Team> findTeamByTeamId(Long teamId);
 }

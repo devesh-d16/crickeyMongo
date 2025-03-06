@@ -16,7 +16,7 @@ import java.util.List;
 public class TeamStats {
 
     @Id
-    private String id;
+    private String teamStatsId;
 
     @Field("runs")
     private int runs = 0;
@@ -27,8 +27,8 @@ public class TeamStats {
     @Field("overs")
     private int overs = 0;
 
-    @Field("is_winner")
-    private boolean isWinner;
+    @Field("winner")
+    private boolean winner;
 
     @Field("team_id")
     private Long teamId; // team id

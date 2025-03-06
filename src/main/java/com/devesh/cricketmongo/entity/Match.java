@@ -19,7 +19,7 @@ import java.util.List;
 public class Match {
 
     @Id
-    private Long id;
+    private Long matchId;
 
     @Field("match_status")
     private MatchStatus matchStatus;

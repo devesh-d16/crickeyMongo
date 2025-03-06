@@ -22,18 +22,18 @@ public class PlayerService {
 
     public Player createPlayer(Player player) {
 
-        if (player.getName() == null || player.getRole() == null) {
+        if (player.getPlayerName() == null || player.getPlayerRole() == null) {
             throw new InvalidRequestException("Player name and role are required.");
         }
-        if (playerRepository.existsPlayerByName(player.getName())) {
-            throw new DuplicateResourceFoundException("Player with name '" + player.getName() + "' already exists.");
+        if (playerRepository.existsByPlayerName(player.getPlayerName())) {
+            throw new DuplicateResourceFoundException("Player with name '" + player.getPlayerName() + "' already exists.");
         }
 
         try {
             return playerRepository.save(player);
         }
         catch (DataAccessException e) {
-            throw new SystemException("Error while creating player '" + player.getName() + "'. Please try again.");
+            throw new SystemException("Error while creating player '" + player.getPlayerName() + "'. Please try again.");
         }
         catch (Exception e) {
             throw new SystemException("Unexpected error occurred. Please contact support.");
@@ -49,11 +49,11 @@ public class PlayerService {
     }
 
     public Player getPlayerById(Long playerId) {
-        return playerRepository.getPlayerById(playerId).orElseThrow(RuntimeException::new);
+        return playerRepository.findByPlayerId(playerId).orElseThrow(RuntimeException::new);
     }
 
     public Player getPlayerByName(String name) {
-        Player player = playerRepository.getPlayerByName(name);
+        Player player = playerRepository.findByPlayerName(name).orElseThrow(() -> new ResourceNotFoundException("Player not found"));
         if(player == null){
             throw new ResourceNotFoundException("Player with name " + name + " not found.");
         }
@@ -63,7 +63,7 @@ public class PlayerService {
     public List<Player> getPlayerByRole(String playerRole) {
         try {
             PlayerRole role = PlayerRole.valueOf(playerRole.toUpperCase());
-            return playerRepository.getAllByRole(role);
+            return playerRepository.findAllByPlayerRole(role);
         }
         catch (IllegalArgumentException e) {
             throw new InvalidRequestException("Invalid player role: " + playerRole);
@@ -71,19 +71,19 @@ public class PlayerService {
     }
 
     public Player updatePlayer(Long playerId, Player player) {
-        if (player.getName() == null || player.getRole() == null) {
+        if (player.getPlayerName() == null || player.getPlayerRole() == null) {
             throw new InvalidRequestException("Player name and role are required.");
         }
 
-        Player updatePlayer = playerRepository.getPlayerById(playerId)
+        Player updatePlayer = playerRepository.findByPlayerId(playerId)
                 .orElseThrow(() -> new ResourceNotFoundException("Player with id " + playerId + " not found."));
 
-        if (playerRepository.existsPlayerByName(player.getName()) && !updatePlayer.getName().equals(player.getName())) {
-            throw new DuplicateResourceFoundException("Player name '" + player.getName() + "' already exists.");
+        if (playerRepository.existsByPlayerName(player.getPlayerName()) && !updatePlayer.getPlayerName().equals(player.getPlayerName())) {
+            throw new DuplicateResourceFoundException("Player name '" + player.getPlayerName() + "' already exists.");
         }
 
-        updatePlayer.setName(player.getName());
-        updatePlayer.setRole(player.getRole());
+        updatePlayer.setPlayerName(player.getPlayerName());
+        updatePlayer.setPlayerRole(player.getPlayerRole());
         return playerRepository.save(updatePlayer);
     }
 

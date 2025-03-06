@@ -16,7 +16,7 @@ import java.util.List;
 public class Inning {
 
     @Id
-    private String id;
+    private String inningId;
 
     @Field("runs")
     private int runs = 0;

@@ -6,5 +6,5 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface TeamStatsRepository extends MongoRepository<TeamStats, String> {
-    TeamStats getTeamStatsById(String team1Id);
+    TeamStats findTeamStatsByTeamStatsId(String teamStatsId);
 }

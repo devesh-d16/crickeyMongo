@@ -9,7 +9,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
 @Service
@@ -29,7 +28,7 @@ public class BallService {
         PlayerStats playerBatting = strikePair.playerOnStrike;
         playerBatting.incrementBallFaced();
         bowler.incrementBallsBowled();
-        ball.setBatsmanId(playerBatting.getId());
+        ball.setBatsmanId(playerBatting.getTeamId());
         int run = simulateRun(strikePair);
         handleRunOrWicket(inning, ball, run, batting, strikePair, targetRun, bowler);
 
@@ -40,7 +39,7 @@ public class BallService {
 
     public int simulateRun(StrikePair strikePair) {
         Player player = playerService.getPlayerById(strikePair.playerOnStrike.getPlayerId());
-        return (player.getRole() == PlayerRole.BATTER)
+        return (player.getPlayerRole() == PlayerRole.BATTER)
                 ? scoringService.getRandomBatterWeightScore()
                 : scoringService.getRandomBowlerWeightScore();
     }
@@ -81,7 +80,7 @@ public class BallService {
 
     public void deleteAllBallById(List<String> ballIds) {
         for(String ballId : ballIds){
-            ballRepository.deleteById(ballId);
+            ballRepository.deleteByBallId(ballId);
         }
     }
 }

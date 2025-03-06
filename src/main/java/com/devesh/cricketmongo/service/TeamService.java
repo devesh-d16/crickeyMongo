@@ -20,16 +20,16 @@ public class TeamService {
     private final TeamRepository teamRepository;
 
     public Team createTeam(Team team) {
-        if(team.getName() == null){
+        if(team.getTeamName() == null){
             throw new InvalidRequestException("Team name is required");
         }
         try {
             Team newTeam = new Team();
-            newTeam.setName(team.getName().toUpperCase());
+            newTeam.setTeamName(team.getTeamName().toUpperCase());
             return teamRepository.save(team);
         }
         catch (DataAccessException e) {
-            throw new SystemException("Error while creating team '" + team.getId() + "'. Please try again.");
+            throw new SystemException("Error while creating team '" + team.getTeamId() + "'. Please try again.");
         }
         catch (Exception e) {
             throw new SystemException("Unexpected error occurred. Please contact support.");
@@ -45,11 +45,11 @@ public class TeamService {
     }
 
     public Team getTeamById(Long teamId) {
-        return teamRepository.getTeamById((teamId)).orElseThrow(() -> new ResourceNotFoundException("Team with id " + teamId + " not found."));
+        return teamRepository.findTeamByTeamId((teamId)).orElseThrow(() -> new ResourceNotFoundException("Team with id " + teamId + " not found."));
     }
 
     public Team getTeamByName(String teamName) {
-        Team team = teamRepository.findByName(teamName).orElseThrow(() -> new ResourceNotFoundException("Team with name " + teamName + " not found."));
+        Team team = teamRepository.findByTeamName(teamName).orElseThrow(() -> new ResourceNotFoundException("Team with name " + teamName + " not found."));
         if (team == null) {
             throw new ResourceNotFoundException("Team with name " + teamName + " not found.");
         }
@@ -57,17 +57,17 @@ public class TeamService {
     }
 
     public Team updateTeam(Long teamId, Team team) {
-        if(team.getName() == null){
+        if(team.getTeamName() == null){
             throw new InvalidRequestException("Team name is required.");
         }
-        Team updateTeam = teamRepository.getTeamById(teamId)
+        Team updateTeam = teamRepository.findTeamByTeamId(teamId)
                 .orElseThrow(() -> new ResourceNotFoundException("Team with id " + teamId + " not found."));
 
-        if(teamRepository.existsByName(team.getName()) && !updateTeam.getName().equals(team.getName())){
-            throw new DuplicateResourceFoundException("Team name '" + team.getName() + "' already exists.");
+        if(teamRepository.existsByTeamName(team.getTeamName()) && !updateTeam.getTeamName().equals(team.getTeamName())){
+            throw new DuplicateResourceFoundException("Team name '" + team.getTeamName() + "' already exists.");
         }
 
-        updateTeam.setName(team.getName());
+        updateTeam.setTeamName(team.getTeamName());
         return teamRepository.save(updateTeam);
     }
 

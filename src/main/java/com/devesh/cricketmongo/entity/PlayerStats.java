@@ -16,24 +16,24 @@ import org.springframework.data.mongodb.core.mapping.Field;
 public class PlayerStats {
 
     @Id
-    private String id;
+    private String playerStatsId;
 
     @Field("name")
-    private String name;
+    private String playerName;
 
-    @Field("runsScored")
+    @Field("runs_scored")
     private int runsScored = 0;
 
-    @Field("ballsFaced")
+    @Field("balls_faced")
     private int ballsFaced;
 
-    @Field("wicketsTaken")
+    @Field("wickets_taken")
     private int wicketsTaken = 0;
 
-    @Field("ballsBowled")
+    @Field("balls_bowled")
     private int ballsBowled = 0;
 
-    @Field("runsConceded")
+    @Field("runs_conceded")
     private int runsConceded = 0;
 
     @Field("player_id")
